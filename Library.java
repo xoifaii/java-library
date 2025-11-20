@@ -29,7 +29,7 @@ public synchronized String generateUniqueIsbn(String title, String author) {
         isbnCounter = 0;
     }
     isbnCounter += 1;
-    String input = isbnCounter + title + author;
+    String input = isbnCounter + title + author + System.nanoTime();
     byte[] data = input.getBytes();
     long hash = XXHash64.hash64(data, 0, data.length, isbnCounter);
     
