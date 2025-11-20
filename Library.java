@@ -24,27 +24,18 @@ public class Library {
     this.isbnCounter = 0;
   }
 
-  public synchronized String generateUniqueIsbn(String title, String author) {
+public synchronized String generateUniqueIsbn(String title, String author) {
     if (isbnCounter == Integer.MAX_VALUE) {
-      isbnCounter = 0;
+        isbnCounter = 0;
     }
-    isbnCounter = isbnCounter + 1;
-    long timestamp = System.currentTimeMillis();
-    String input = isbnCounter + title + author + timestamp;
-    int hash = XXHash32.hash(input.getBytes(), isbnCounter);
-    String hashHex = Integer.toHexString(hash);
-    String isbn = "";
-    for (int i = 0; i < hashHex.length() && isbn.length() < 13; i++) {
-      char c = hashHex.charAt(i);
-      if (c >= '0' && c <= '9') {
-        isbn = isbn + c;
-      }
-    }
-    while (isbn.length() < 13) {
-      isbn = isbn + "0";
-    }
-    return isbn;
-  }
+    isbnCounter += 1;
+    String input = isbnCounter + title + author;
+    byte[] data = input.getBytes();
+    long hash = XXHash64.hash64(data, 0, data.length, isbnCounter);
+    
+    long isbn13 = Math.abs(hash) % 10000000000000L;
+    return String.format("%013d", isbn13);
+}
 
   public String getLibraryName() {
     return libraryName;
@@ -73,7 +64,7 @@ public class Library {
     String list = "";
     for (int i = 0; i < bookCount; i++) {
       if (books[i] != null) {
-        list = list + i + ": " + books[i].toString() + "\n";
+        list += i + ": " + books[i].toString() + "\n";
       }
     }
     if (list.isEmpty()) {
@@ -90,7 +81,7 @@ public class Library {
     boolean hasAvailable = false;
     for (int i = 0; i < bookCount; i++) {
       if (books[i] != null && !books[i].isOnLoan()) {
-        list = list + i + ": " + books[i].toString() + "\n";
+        list += i + ": " + books[i].toString() + "\n";
         hasAvailable = true;
       }
     }
@@ -104,7 +95,7 @@ public class Library {
     int count = 0;
     for (int i = 0; i < bookCount; i++) {
       if (books[i] != null && books[i].isOnLoan()) {
-        count = count + 1;
+        count += 1;
       }
     }
     return count;
@@ -118,8 +109,8 @@ public class Library {
     int ratedCount = 0;
     for (int i = 0; i < bookCount; i++) {
       if (books[i] != null && books[i].getRating() >= 1) {
-        total = total + books[i].getRating();
-        ratedCount = ratedCount + 1;
+        total += books[i].getRating();
+        ratedCount += 1;
       }
     }
     if (ratedCount == 0) {
@@ -151,7 +142,7 @@ public class Library {
       return false;
     }
     books[bookCount] = book;
-    bookCount = bookCount + 1;
+    bookCount += 1;
     return true;
   }
 

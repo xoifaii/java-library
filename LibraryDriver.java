@@ -1,7 +1,6 @@
 import java.util.Scanner;
 
 public class LibraryDriver {
-
   private final Scanner input;
   private final Library lib;
 
@@ -27,6 +26,7 @@ public class LibraryDriver {
       name = input.nextLine();
       result = Rules.notEmpty().validate(name);
     }
+
     return name;
   }
 
@@ -37,6 +37,7 @@ public class LibraryDriver {
       input.nextLine();
       System.out.print("Enter the maximum number of books that the library can hold: ");
     }
+
     int maxBooks = input.nextInt();
     input.nextLine();
     
@@ -44,15 +45,18 @@ public class LibraryDriver {
     while (!result.isSuccess()) {
       System.out.println(result.getMessage());
       System.out.print("Enter the maximum number of books that the library can hold: ");
+
       while (!input.hasNextInt()) {
         System.out.println("Invalid input. Please enter a positive number.");
         input.nextLine();
         System.out.print("Enter the maximum number of books that the library can hold: ");
       }
+
       maxBooks = input.nextInt();
       input.nextLine();
       result = Rules.positive().validate(maxBooks);
     }
+
     return maxBooks;
   }
 
@@ -205,6 +209,7 @@ public class LibraryDriver {
       input.nextLine();
       return -1;
     }
+
     int index = input.nextInt();
     input.nextLine();
     
@@ -223,6 +228,7 @@ public class LibraryDriver {
       input.nextLine();
       return -1;
     }
+    
     double rating = input.nextDouble();
     input.nextLine();
     
