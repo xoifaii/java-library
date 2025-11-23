@@ -1,3 +1,21 @@
+/**
+ * If you think Java generics are verbose, Luau said "hold my metatable".
+ * At least Java won't let me do m.__index(m.__index)(m.__index)
+ * 
+ * Before you complain about boilerplate, here's valid Luau I wrote for fun:
+ * 
+ * local Y = function<T>(f: ((T) -> T) -> (T) -> T): (T) -> T
+ * return (function(x) return f(function(y) return x(x)(y) end) end)(function(x)
+ * return f(function(y) return x(x)(y) end) end)
+ * end
+ * 
+ * local q: typeof(t) & ~~typeof(t) | never = t :: any
+ * m.__call = m.__index(m.__index)(m.__index)
+ * 
+ * Java made me write 150 lines. Luau did it in 15... incomprehensibly.
+ * Verbose? Yes. But at least I can read it tomorrow.
+ */
+
 public class Rules {
 
   public interface Validator<T> {
