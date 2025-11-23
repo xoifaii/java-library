@@ -40,7 +40,7 @@ public class LibraryDriver {
 
     int maxBooks = input.nextInt();
     input.nextLine();
-    
+
     Rules.ValidationResult result = Rules.positive().validate(maxBooks);
     while (!result.isSuccess()) {
       System.out.println(result.getMessage());
@@ -72,12 +72,12 @@ public class LibraryDriver {
     System.out.println("8. Show highest-rated book");
     System.out.println("9. Quit");
     System.out.print("Enter option: ");
-    
+
     if (!input.hasNextInt()) {
       input.nextLine();
       return 0;
     }
-    
+
     int option = input.nextInt();
     input.nextLine();
     return option;
@@ -114,22 +114,22 @@ public class LibraryDriver {
     }
     System.out.print("Enter book title: ");
     String title = input.nextLine();
-    
+
     Rules.ValidationResult titleResult = Rules.notEmpty().validate(title);
     if (!titleResult.isSuccess()) {
       System.out.println(titleResult.getMessage());
       return;
     }
-    
+
     System.out.print("Enter book author: ");
     String author = input.nextLine();
-    
+
     Rules.ValidationResult authorResult = Rules.notEmpty().validate(author);
     if (!authorResult.isSuccess()) {
       System.out.println(authorResult.getMessage());
       return;
     }
-    
+
     String isbn = lib.generateUniqueIsbn(title, author);
     Book book = new Book(title, author, isbn);
     if (lib.addBook(book)) {
@@ -145,12 +145,12 @@ public class LibraryDriver {
       return;
     }
     System.out.println(lib.listAllBooks());
-    
+
     int index = getValidIndex("Enter index of book to borrow: ");
     if (index == -1) {
       return;
     }
-    
+
     if (lib.borrowBook(index)) {
       System.out.println("Book borrowed successfully!");
     } else {
@@ -168,12 +168,12 @@ public class LibraryDriver {
       return;
     }
     System.out.println(lib.listAllBooks());
-    
+
     int index = getValidIndex("Enter index of book to return: ");
     if (index == -1) {
       return;
     }
-    
+
     if (lib.returnBook(index)) {
       System.out.println("Book returned successfully!");
     } else {
@@ -187,17 +187,17 @@ public class LibraryDriver {
       return;
     }
     System.out.println(lib.listAllBooks());
-    
+
     int index = getValidIndex("Enter index of book to rate: ");
     if (index == -1) {
       return;
     }
-    
+
     double rating = getValidRating();
     if (rating == -1) {
       return;
     }
-    
+
     lib.getBooks()[index].setRating(rating);
     System.out.println("Book rated successfully!");
   }
@@ -212,7 +212,7 @@ public class LibraryDriver {
 
     int index = input.nextInt();
     input.nextLine();
-    
+
     Rules.ValidationResult result = Rules.inRange(0, lib.getBookCount() - 1).validate(index);
     if (!result.isSuccess()) {
       System.out.println(result.getMessage());
@@ -228,10 +228,10 @@ public class LibraryDriver {
       input.nextLine();
       return -1;
     }
-    
+
     double rating = input.nextDouble();
     input.nextLine();
-    
+
     Rules.ValidationResult result = Rules.inRangeDouble(0, 5).validate(rating);
     if (!result.isSuccess()) {
       System.out.println(result.getMessage());

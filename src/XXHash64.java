@@ -1,4 +1,5 @@
-// Based on my own implementation of XXHash32 in luau but updated to use java's long type
+
+// Based on my own implementation of XXHash32 in luau but updated to use java's long type -> https://github.com/daily3014/rbx-cryptography/blob/main/src/Hashing/XXH32.luau
 import static java.lang.Long.rotateLeft;
 
 public class XXHash64 {
