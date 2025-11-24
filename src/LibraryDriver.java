@@ -11,8 +11,10 @@ public class LibraryDriver {
   public LibraryDriver() {
     input = new Scanner(System.in);
     String libraryName = getValidLibraryName();
+
     int maxBooks = getValidMaxBooks();
     lib = new Library(libraryName, maxBooks);
+
     runMenu();
   }
 
@@ -20,9 +22,11 @@ public class LibraryDriver {
     System.out.print("Enter in the name of the Library: ");
     String name = input.nextLine();
     Rules.ValidationResult result = Rules.notEmpty().validate(name);
+
     while (!result.isSuccess()) {
       System.out.println(result.getMessage());
       System.out.print("Enter in the name of the Library: ");
+
       name = input.nextLine();
       result = Rules.notEmpty().validate(name);
     }
@@ -90,6 +94,7 @@ public class LibraryDriver {
       System.out.println();
       option = mainMenu();
     }
+
     System.out.println("Exiting... Goodbye!");
   }
 
@@ -112,6 +117,7 @@ public class LibraryDriver {
       System.out.println("Library is full! Cannot add more books.");
       return;
     }
+
     System.out.print("Enter book title: ");
     String title = input.nextLine();
 
@@ -144,6 +150,7 @@ public class LibraryDriver {
       System.out.println("No books in library");
       return;
     }
+
     System.out.println(lib.listAllBooks());
 
     int index = getValidIndex("Enter index of book to borrow: ");
@@ -167,6 +174,7 @@ public class LibraryDriver {
       System.out.println("No books are currently on loan");
       return;
     }
+    
     System.out.println(lib.listAllBooks());
 
     int index = getValidIndex("Enter index of book to return: ");
@@ -186,6 +194,7 @@ public class LibraryDriver {
       System.out.println("No books in library");
       return;
     }
+
     System.out.println(lib.listAllBooks());
 
     int index = getValidIndex("Enter index of book to rate: ");
@@ -218,6 +227,7 @@ public class LibraryDriver {
       System.out.println(result.getMessage());
       return -1;
     }
+
     return index;
   }
 
@@ -237,6 +247,7 @@ public class LibraryDriver {
       System.out.println(result.getMessage());
       return -1;
     }
+    
     return rating;
   }
 

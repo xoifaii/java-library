@@ -1,23 +1,7 @@
-/**
- * If you think Java generics are verbose, Luau said "hold my metatable".
- * At least Java won't let me do m.__index(m.__index)(m.__index)
- * 
- * Before you complain about boilerplate, here's valid Luau I wrote for fun:
- * 
- * local Y = function<T>(f: ((T) -> T) -> (T) -> T): (T) -> T
- * return (function(x) return f(function(y) return x(x)(y) end) end)(function(x)
- * return f(function(y) return x(x)(y) end) end)
- * end
- * 
- * local q: typeof(t) & ~~typeof(t) | never = t :: any
- * m.__call = m.__index(m.__index)(m.__index)
- * 
- * Java made me write 150 lines. Luau did it in 15... incomprehensibly.
- * Verbose? Yes. But at least I can read it tomorrow.
- */
-
 public class Rules {
-
+  // <T> is a generic type parameter - it's a placeholder for any type
+  // When you use Validator<String>, T becomes String
+  // When you use Validator<Integer>, T becomes Integer
   public interface Validator<T> {
     ValidationResult validate(T value);
   }
@@ -48,11 +32,15 @@ public class Rules {
     }
   }
 
+  // Returns Validator<String> - the <String> tells the compiler T = String
+  // Java infers the lambda return type automatically from the method signature
+  // A lambda expression is a short block of code that takes in parameters and returns a value
   public static Validator<String> notNull() {
     return value -> {
       if (value == null) {
         return ValidationResult.failure("Value cannot be null");
       }
+
       return ValidationResult.success();
     };
   }
@@ -65,6 +53,7 @@ public class Rules {
       if (value.trim().isEmpty()) {
         return ValidationResult.failure("Value cannot be empty");
       }
+
       return ValidationResult.success();
     };
   }
@@ -77,6 +66,7 @@ public class Rules {
       if (value.length() > max) {
         return ValidationResult.failure("Value exceeds maximum length of " + max);
       }
+
       return ValidationResult.success();
     };
   }
@@ -89,10 +79,13 @@ public class Rules {
       if (value.length() != length) {
         return ValidationResult.failure("Value must be exactly " + length + " characters");
       }
+
       return ValidationResult.success();
     };
   }
 
+  // Returns Validator<Integer> - now T = Integer instead of String
+  // The lambda parameter 'value' is inferred to be type Integer
   public static Validator<Integer> positive() {
     return value -> {
       if (value == null) {
@@ -101,6 +94,7 @@ public class Rules {
       if (value <= 0) {
         return ValidationResult.failure("Value must be positive");
       }
+
       return ValidationResult.success();
     };
   }
@@ -113,6 +107,7 @@ public class Rules {
       if (value < min || value > max) {
         return ValidationResult.failure("Value must be between " + min + " and " + max);
       }
+
       return ValidationResult.success();
     };
   }
@@ -125,12 +120,16 @@ public class Rules {
       if (value < min || value > max) {
         return ValidationResult.failure("Value must be between " + min + " and " + max);
       }
+
       return ValidationResult.success();
     };
   }
 
   @SafeVarargs
   @SuppressWarnings("varargs")
+  // <T> before the return type means this method itself is generic
+  // T is inferred from the validators you pass in
+  // If you pass Validator<String> validators, T becomes String automatically, pretty handy
   public static <T> Validator<T> all(Validator<T>... validators) {
     return value -> {
       for (Validator<T> validator : validators) {
@@ -139,6 +138,7 @@ public class Rules {
           return result;
         }
       }
+
       return ValidationResult.success();
     };
   }
@@ -148,6 +148,7 @@ public class Rules {
       if (value == null) {
         return ValidationResult.success();
       }
+      
       return validator.validate(value);
     };
   }

@@ -1,9 +1,13 @@
+import java.util.HashSet;
+
 public class Library {
 
   private String libraryName;
   private Book[] books;
   private int bookCount;
-  private int isbnCounter;
+  private static long isbnCounter = 0;
+  private static HashSet<String> generatedIsbns = new HashSet<String>();
+  // A HashSet is a collection of elements where every element is unique, perfect for isbn's
 
   public Library(String libraryName, int maxBooks) {
     Rules.ValidationResult nameResult = Rules.notEmpty().validate(libraryName);
@@ -21,21 +25,14 @@ public class Library {
     }
 
     this.bookCount = 0;
-    this.isbnCounter = 0;
   }
 
-public synchronized String generateUniqueIsbn(String title, String author) {
-    if (isbnCounter == Integer.MAX_VALUE) {
-        isbnCounter = 0;
-    }
+  public synchronized String generateUniqueIsbn(String title, String author) {
     isbnCounter += 1;
-    String input = isbnCounter + title + author + System.nanoTime();
-    byte[] data = input.getBytes();
-    long hash = XXHash64.hash64(data, 0, data.length, isbnCounter);
-    
-    long isbn13 = Math.abs(hash) % 10000000000000L;
-    return String.format("%013d", isbn13);
-}
+    String isbn = String.format("%013d", isbnCounter);
+    generatedIsbns.add(isbn);
+    return isbn;
+  }
 
   public String getLibraryName() {
     return libraryName;
