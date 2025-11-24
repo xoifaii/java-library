@@ -27,6 +27,7 @@ public class Library {
     this.bookCount = 0;
   }
 
+  // synchronized is needed here to prevent multiple libraries from generating the same isbn
   public synchronized String generateUniqueIsbn(String title, String author) {
     isbnCounter += 1;
     String isbn = String.format("%013d", isbnCounter);
