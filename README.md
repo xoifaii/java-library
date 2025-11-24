@@ -4,7 +4,7 @@ A terminal based library system built with Java 25 LTS, since I wanted to test o
 ## Features
 - **Book Management**: Add, borrow, and return books
 - **Rating System**: Rate books on a scale of 0-5
-- **ISBN Generation**: Uses XXHash64 (non cryptographic hash) to generate unique ISBN numbers
+- **ISBN Generation**: Uses HashSet and a counter to generate unique ISBN numbers
 - **Book Tracking**: View all books and filter by availability
 - **Statistics**: Calculate average ratings and find highest-rated books
 
