@@ -1,7 +1,7 @@
 public class Rules {
-  // <T> is a generic type parameter - it's a placeholder for any type
+  // <T> is a generic type parameter, it's a placeholder for any type
   // When you use Validator<String>, T becomes String
-  // When you use Validator<Integer>, T becomes Integer
+  // When you use Validator<Integer>, T becomes Integer.
   public interface Validator<T> {
     ValidationResult validate(T value);
   }
@@ -32,9 +32,10 @@ public class Rules {
     }
   }
 
-  // Returns Validator<String> - the <String> tells the compiler T = String
+  // Returns Validator<String> the <String> tells the compiler T = String
   // Java infers the lambda return type automatically from the method signature
-  // A lambda expression is a short block of code that takes in parameters and returns a value
+  // A lambda expression is a short block of code that takes in parameters and
+  // returns a value.
   public static Validator<String> notNull() {
     return value -> {
       if (value == null) {
@@ -84,7 +85,7 @@ public class Rules {
     };
   }
 
-  // Returns Validator<Integer> - now T = Integer instead of String
+  // Returns Validator<Integer> now T = Integer instead of String
   // The lambda parameter 'value' is inferred to be type Integer
   public static Validator<Integer> positive() {
     return value -> {
@@ -129,7 +130,8 @@ public class Rules {
   @SuppressWarnings("varargs")
   // <T> before the return type means this method itself is generic
   // T is inferred from the validators you pass in
-  // If you pass Validator<String> validators, T becomes String automatically, pretty handy
+  // If you pass Validator<String> validators, T becomes String automatically.
+  // Pretty handy.
   public static <T> Validator<T> all(Validator<T>... validators) {
     return value -> {
       for (Validator<T> validator : validators) {
@@ -148,7 +150,7 @@ public class Rules {
       if (value == null) {
         return ValidationResult.success();
       }
-      
+
       return validator.validate(value);
     };
   }

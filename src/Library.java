@@ -1,14 +1,13 @@
 import java.util.HashSet;
 
 public class Library {
-
   private String libraryName;
   private Book[] books;
   private int bookCount;
   private static long isbnCounter = 0;
   private static HashSet<String> generatedIsbns = new HashSet<String>();
   // A HashSet is a collection of elements where every element is unique, perfect
-  // for isbn's
+  // for isbn's.
 
   public Library(String libraryName, int maxBooks) {
     Rules.ValidationResult nameResult = Rules.notEmpty().validate(libraryName);
@@ -29,7 +28,7 @@ public class Library {
   }
 
   // synchronized is needed here to prevent multiple libraries from generating the
-  // same isbn
+  // same isbn.
   public synchronized String generateUniqueIsbn(String title, String author) {
     isbnCounter += 1;
     String isbn = String.format("%013d", isbnCounter);
@@ -162,6 +161,10 @@ public class Library {
     if (isbn == null) {
       return null;
     }
+    if (isEmpty()) {
+      return null;
+    }
+
     for (int i = 0; i < bookCount; i++) {
       if (books[i] != null && books[i].getIsbn().equals(isbn)) {
         return books[i];

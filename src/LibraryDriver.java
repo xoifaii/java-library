@@ -95,7 +95,8 @@ public class LibraryDriver {
       option = mainMenu();
     }
 
-    System.out.println("Exiting... Goodbye!");
+    System.out.println("Exiting. Goodbye!");
+    input.close();
   }
 
   private void processOption(int option) {
@@ -174,7 +175,7 @@ public class LibraryDriver {
       System.out.println("No books are currently on loan");
       return;
     }
-    
+
     System.out.println(lib.listAllBooks());
 
     int index = getValidIndex("Enter index of book to return: ");
@@ -247,7 +248,7 @@ public class LibraryDriver {
       System.out.println(result.getMessage());
       return -1;
     }
-    
+
     return rating;
   }
 

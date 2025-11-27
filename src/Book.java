@@ -60,8 +60,7 @@ public class Book {
   }
 
   public void setAuthor(String author) {
-    Rules.ValidationResult result = Rules.all(Rules.notNull(), Rules.maxLength(20))
-        .validate(author);
+    Rules.ValidationResult result = Rules.all(Rules.notNull(), Rules.maxLength(20)).validate(author);
     if (result.isSuccess()) {
       this.author = author;
     }
