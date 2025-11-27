@@ -7,7 +7,8 @@ public class Library {
   private int bookCount;
   private static long isbnCounter = 0;
   private static HashSet<String> generatedIsbns = new HashSet<String>();
-  // A HashSet is a collection of elements where every element is unique, perfect for isbn's
+  // A HashSet is a collection of elements where every element is unique, perfect
+  // for isbn's
 
   public Library(String libraryName, int maxBooks) {
     Rules.ValidationResult nameResult = Rules.notEmpty().validate(libraryName);
@@ -27,7 +28,8 @@ public class Library {
     this.bookCount = 0;
   }
 
-  // synchronized is needed here to prevent multiple libraries from generating the same isbn
+  // synchronized is needed here to prevent multiple libraries from generating the
+  // same isbn
   public synchronized String generateUniqueIsbn(String title, String author) {
     isbnCounter += 1;
     String isbn = String.format("%013d", isbnCounter);
@@ -65,9 +67,11 @@ public class Library {
         list += i + ": " + books[i].toString() + "\n";
       }
     }
+
     if (list.isEmpty()) {
       return "No books in the library";
     }
+
     return list;
   }
 
@@ -75,6 +79,7 @@ public class Library {
     if (isEmpty()) {
       return "No books in the library";
     }
+
     String list = "";
     boolean hasAvailable = false;
     for (int i = 0; i < bookCount; i++) {
@@ -83,9 +88,11 @@ public class Library {
         hasAvailable = true;
       }
     }
+
     if (!hasAvailable) {
       return "No available books";
     }
+
     return list;
   }
 
@@ -96,6 +103,7 @@ public class Library {
         count += 1;
       }
     }
+
     return count;
   }
 
@@ -103,6 +111,7 @@ public class Library {
     if (isEmpty()) {
       return 0;
     }
+
     double total = 0;
     int ratedCount = 0;
     for (int i = 0; i < bookCount; i++) {
@@ -111,9 +120,11 @@ public class Library {
         ratedCount += 1;
       }
     }
+
     if (ratedCount == 0) {
       return 0;
     }
+
     return total / ratedCount;
   }
 
@@ -121,6 +132,7 @@ public class Library {
     if (isEmpty()) {
       return null;
     }
+
     Book highest = null;
     for (int i = 0; i < bookCount; i++) {
       if (books[i] != null) {
@@ -129,6 +141,7 @@ public class Library {
         }
       }
     }
+
     return highest;
   }
 
@@ -139,6 +152,7 @@ public class Library {
     if (isFull()) {
       return false;
     }
+
     books[bookCount] = book;
     bookCount += 1;
     return true;
@@ -153,6 +167,7 @@ public class Library {
         return books[i];
       }
     }
+
     return null;
   }
 
@@ -167,6 +182,7 @@ public class Library {
     if (books[index].isOnLoan()) {
       return false;
     }
+
     books[index].borrowBook();
     return true;
   }
@@ -182,6 +198,7 @@ public class Library {
     if (!books[index].isOnLoan()) {
       return false;
     }
+
     books[index].returnBook();
     return true;
   }
