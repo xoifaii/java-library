@@ -5,12 +5,10 @@ public class Rules {
     // When you use Validator<Integer>, T becomes Integer.
 
     public interface Validator<T> {
-
         ValidationResult validate(T value);
     }
 
     public static class ValidationResult {
-
         private final boolean success;
         private final String message;
 
@@ -169,6 +167,7 @@ public class Rules {
             if (isValid) {
                 return ValidationResult.success();
             }
+
             return ValidationResult.failure("Custom validation failed");
         };
     }
@@ -179,6 +178,7 @@ public class Rules {
             if (isValid) {
                 return ValidationResult.success();
             }
+
             return ValidationResult.failure(message);
         };
     }

@@ -60,6 +60,9 @@ public class Book {
         this.rating = 0;
     }
 
+    // Some setters/getters are simply here for future proofing
+    // Updating title/author/genre/isbn is not currently a requirement
+
     public String getTitle() {
         return title;
     }

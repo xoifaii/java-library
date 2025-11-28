@@ -156,7 +156,7 @@ public class LibraryDriver {
             return;
         }
 
-        String isbn = lib.generateUniqueIsbn(title, author);
+        String isbn = lib.generateUniqueIsbn();
         Book book = new Book(title, author, genre, isbn);
         if (lib.addBook(book)) {
             System.out.println("Book added successfully! ISBN: " + isbn);
