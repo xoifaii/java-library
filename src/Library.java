@@ -1,5 +1,6 @@
 
 public class Library {
+
     private String libraryName;
     private Book[] books;
     private int bookCount;
@@ -25,10 +26,19 @@ public class Library {
 
     // synchronized is needed here to prevent multiple libraries from generating the
     // same isbn.
-    public synchronized String generateUniqueIsbn(String title, String author) {
-        isbnCounter += 1;
-        String isbn = String.format("%013d", isbnCounter);
-        return isbn;
+    public synchronized String generateUniqueIsbn() {
+        isbnCounter++;
+
+        String counterStr = Long.toString(isbnCounter);
+        int remaining = 13 - counterStr.length();
+
+        String nanoStr = Long.toString(System.nanoTime());
+
+        // take middle digits to avoid time always being 0 at the end
+        int start = Math.max(0, nanoStr.length() - remaining - 3);
+        String filler = nanoStr.substring(start, start + remaining);
+
+        return counterStr + filler;
     }
 
     public String getLibraryName() {
