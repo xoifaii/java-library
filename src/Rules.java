@@ -41,7 +41,7 @@ public class Rules {
     // A lambda expression is a short block of code that takes in parameters and
     // returns a value.
     public static Validator<String> notNull() {
-        return value -> {
+        return value -> { // This IS the validate method
             if (value == null) {
                 return ValidationResult.failure("Value cannot be null");
             }
