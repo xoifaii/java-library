@@ -137,8 +137,17 @@ public class LibraryDriver {
       return;
     }
 
+    System.out.print("Enter book genre: ");
+    String genre = input.nextLine();
+
+    Rules.ValidationResult genreResult = Rules.notEmpty().validate(genre);
+    if (!genreResult.isSuccess()) {
+      System.out.println(genreResult.getMessage());
+      return;
+    }
+
     String isbn = lib.generateUniqueIsbn(title, author);
-    Book book = new Book(title, author, isbn);
+    Book book = new Book(title, author, genre, isbn);
     if (lib.addBook(book)) {
       System.out.println("Book added successfully! ISBN: " + isbn);
     } else {

@@ -3,13 +3,17 @@ public class Book {
   private String title;
   private String author;
   private String isbn;
+  private String genre;
+
   private boolean onLoan;
   private boolean isRated;
+
   private double rating;
 
-  public Book(String title, String author, String isbn) {
+  public Book(String title, String author, String genre, String isbn) {
     Rules.Validator<String> titleValidator = Rules.all(Rules.notNull(), Rules.maxLength(10));
     Rules.Validator<String> authorValidator = Rules.all(Rules.notNull(), Rules.maxLength(20));
+    Rules.Validator<String> genreValidator = Rules.all(Rules.notNull(), Rules.maxLength(20));
     Rules.Validator<String> isbnValidator = Rules.exactLength(13);
 
     Rules.ValidationResult titleResult = titleValidator.validate(title);
@@ -31,6 +35,17 @@ public class Book {
         this.author = "";
       } else {
         this.author = author.substring(0, Math.min(20, author.length()));
+      }
+    }
+
+    Rules.ValidationResult genreResult = genreValidator.validate(genre);
+    if (genreResult.isSuccess()) {
+      this.genre = genre;
+    } else {
+      if (genre == null) {
+        this.genre = "Default";
+      } else {
+        this.genre = genre.substring(0, Math.min(20, genre.length()));
       }
     }
 
@@ -64,6 +79,17 @@ public class Book {
     Rules.ValidationResult result = Rules.all(Rules.notNull(), Rules.maxLength(20)).validate(author);
     if (result.isSuccess()) {
       this.author = author;
+    }
+  }
+
+  public String getGenre() {
+    return this.genre;
+  }
+
+  public void setGenre(String genre) {
+    Rules.ValidationResult result = Rules.all(Rules.notNull(), Rules.maxLength(20)).validate(genre);
+    if (result.isSuccess()) {
+      this.genre = genre;
     }
   }
 
@@ -108,8 +134,14 @@ public class Book {
 
   @Override
   public String toString() {
-    String loanStatus = onLoan ? "Yes" : "No";
-    return "Title: " + title + " Author: " + author + " : ISBN: " + isbn + " : OnLoan? : "
-        + loanStatus + " Rating : " + (int) rating + " stars";
+    String loanStatus;
+    if (onLoan) {
+      loanStatus = "Yes";
+    } else {
+      loanStatus = "No";
+    }
+
+    return "Title: " + title + " | Author: " + author + " | Genre: " + genre +
+     " | ISBN: " + isbn + " | OnLoan: " + loanStatus + " | Rating: " + (int) rating + " stars";
   }
 }
