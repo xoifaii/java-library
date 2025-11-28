@@ -54,6 +54,7 @@ public class Library {
     if (isEmpty()) {
       return "No books in the library";
     }
+
     String list = "";
     for (int i = 0; i < bookCount; i++) {
       if (books[i] != null) {
@@ -108,7 +109,7 @@ public class Library {
     double total = 0;
     int ratedCount = 0;
     for (int i = 0; i < bookCount; i++) {
-      if (books[i] != null && books[i].getRating() >= 1) {
+      if (books[i] != null && books[i].isRated()) {
         total += books[i].getRating();
         ratedCount += 1;
       }
@@ -129,7 +130,11 @@ public class Library {
     Book highest = null;
     for (int i = 0; i < bookCount; i++) {
       if (books[i] != null) {
-        if (highest == null || books[i].getRating() > highest.getRating()) {
+        if (highest == null && books[i].isRated()) {
+          highest = books[i];
+        }
+
+        if (highest != null && books[i].isRated() && books[i].getRating() > highest.getRating()) {
           highest = books[i];
         }
       }

@@ -272,7 +272,7 @@ public class LibraryDriver {
   private void showHighestRatedBook() {
     Book highest = lib.findHighestRatedBook();
     if (highest == null) {
-      System.out.println("No books in library");
+      System.out.println("No rated books in library");
     } else {
       System.out.println("Highest rated book:");
       System.out.println(highest.toString());

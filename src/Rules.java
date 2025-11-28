@@ -51,6 +51,7 @@ public class Rules {
       if (value == null) {
         return ValidationResult.failure("Value cannot be null");
       }
+
       if (value.trim().isEmpty()) {
         return ValidationResult.failure("Value cannot be empty");
       }
@@ -64,6 +65,7 @@ public class Rules {
       if (value == null) {
         return ValidationResult.failure("Value cannot be null");
       }
+
       if (value.length() > max) {
         return ValidationResult.failure("Value exceeds maximum length of " + max);
       }
@@ -77,6 +79,7 @@ public class Rules {
       if (value == null) {
         return ValidationResult.failure("Value cannot be null");
       }
+
       if (value.length() != length) {
         return ValidationResult.failure("Value must be exactly " + length + " characters");
       }
@@ -118,6 +121,7 @@ public class Rules {
       if (value == null) {
         return ValidationResult.failure("Value cannot be null");
       }
+
       if (value < min || value > max) {
         return ValidationResult.failure("Value must be between " + min + " and " + max);
       }

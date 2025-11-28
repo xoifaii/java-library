@@ -4,6 +4,7 @@ public class Book {
   private String author;
   private String isbn;
   private boolean onLoan;
+  private boolean isRated;
   private double rating;
 
   public Book(String title, String author, String isbn) {
@@ -93,10 +94,15 @@ public class Book {
     return rating;
   }
 
+  public boolean isRated() {
+    return isRated;
+  }
+
   public void setRating(double rating) {
     Rules.ValidationResult result = Rules.inRangeDouble(0, 5).validate(rating);
     if (result.isSuccess()) {
       this.rating = rating;
+      this.isRated = true;
     }
   }
 
