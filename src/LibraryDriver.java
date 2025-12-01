@@ -1,6 +1,8 @@
+
 import java.util.Scanner;
 
 public class LibraryDriver {
+
     private static final int INVALID_INPUT = -1;
     private static final int MENU_QUIT = 10;
     private static final double MIN_RATING = 0;
@@ -41,29 +43,34 @@ public class LibraryDriver {
 
     private int getValidMaxBooks() {
         System.out.print("Enter the maximum number of books that the library can hold: ");
-        while (!input.hasNextInt()) {
-            System.out.println("Invalid input. Please enter a positive number.");
-            input.nextLine();
-            System.out.print("Enter the maximum number of books that the library can hold: ");
-        }
+        String line = input.nextLine();
+        Rules.ValidationResult result = Rules.validInteger().validate(line);
 
-        int maxBooks = input.nextInt();
-        input.nextLine();
-
-        Rules.ValidationResult result = Rules.positive().validate(maxBooks);
         while (!result.isSuccess()) {
             System.out.println(result.getMessage());
             System.out.print("Enter the maximum number of books that the library can hold: ");
+            line = input.nextLine();
+            result = Rules.validInteger().validate(line);
+        }
 
-            while (!input.hasNextInt()) {
-                System.out.println("Invalid input. Please enter a positive number.");
-                input.nextLine();
+        int maxBooks = Integer.parseInt(line.trim());
+        Rules.ValidationResult positiveResult = Rules.positive().validate(maxBooks);
+
+        while (!positiveResult.isSuccess()) {
+            System.out.println(positiveResult.getMessage());
+            System.out.print("Enter the maximum number of books that the library can hold: ");
+            line = input.nextLine();
+            result = Rules.validInteger().validate(line);
+
+            while (!result.isSuccess()) {
+                System.out.println(result.getMessage());
                 System.out.print("Enter the maximum number of books that the library can hold: ");
+                line = input.nextLine();
+                result = Rules.validInteger().validate(line);
             }
 
-            maxBooks = input.nextInt();
-            input.nextLine();
-            result = Rules.positive().validate(maxBooks);
+            maxBooks = Integer.parseInt(line.trim());
+            positiveResult = Rules.positive().validate(maxBooks);
         }
 
         return maxBooks;

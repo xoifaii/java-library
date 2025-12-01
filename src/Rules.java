@@ -5,10 +5,12 @@ public class Rules {
     // When you use Validator<Integer>, T becomes Integer.
 
     public interface Validator<T> {
+
         ValidationResult validate(T value);
     }
 
     public static class ValidationResult {
+
         private final boolean success;
         private final String message;
 
@@ -126,6 +128,22 @@ public class Rules {
 
             if (value < min || value > max) {
                 return ValidationResult.failure("Value must be between " + min + " and " + max);
+            }
+
+            return ValidationResult.success();
+        };
+    }
+
+    public static Validator<String> validInteger() {
+        return value -> {
+            if (value == null || value.trim().isEmpty()) {
+                return ValidationResult.failure("Value cannot be empty");
+            }
+
+            for (int i = 0; i < value.trim().length(); i++) {
+                if (!Character.isDigit(value.trim().charAt(i))) {
+                    return ValidationResult.failure("Value must be a valid integer");
+                }
             }
 
             return ValidationResult.success();
