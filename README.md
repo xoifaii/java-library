@@ -4,7 +4,7 @@ A terminal based library system built with Java 25 LTS, since I wanted to test o
 ## Features
 - **Book Management**: Add, borrow, and return books
 - **Rating System**: Rate books on a scale of 0-5
-- **ISBN Generation**: Uses HashSet and a counter to generate unique ISBN numbers
+- **ISBN Generation**: Uses nanotime and a counter to generate unique ISBN numbers
 - **Book Tracking**: View all books and filter by availability
 - **Statistics**: Calculate average ratings and find highest-rated books
 
@@ -30,6 +30,7 @@ run.bat
 4. **Rate a book** - Rate a book (0-5 stars)
 5. **List all books** - Display all books in the library
 6. **List available books** - Show only available books
-7. **Show average rating** - Calculate average rating across all rated books
-8. **Show highest-rated book** - Display the book with the highest rating
-9. **Quit** - Exit the application
+7. **Find a book** - Find any book based on author, title, isbn etc
+8. **Show average rating** - Calculate average rating across all rated books
+9. **Show highest-rated book** - Display the book with the highest rating
+10. **Quit** - Exit the application
