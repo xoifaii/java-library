@@ -1,7 +1,11 @@
-
 import java.util.Scanner;
 
 public class LibraryDriver {
+    private static final int INVALID_INPUT = -1;
+    private static final int MENU_QUIT = 10;
+    private static final double MIN_RATING = 0;
+    private static final double MAX_RATING = 5;
+
     private final Scanner input;
     private final Library lib;
 
@@ -73,14 +77,15 @@ public class LibraryDriver {
         System.out.println("4. Rate a book");
         System.out.println("5. List all books");
         System.out.println("6. List available books");
-        System.out.println("7. Show average rating");
-        System.out.println("8. Show highest-rated book");
-        System.out.println("9. Quit");
+        System.out.println("7. Find a book");
+        System.out.println("8. Show average rating");
+        System.out.println("9. Show highest-rated book");
+        System.out.println("10. Quit");
         System.out.print("Enter option: ");
 
         if (!input.hasNextInt()) {
             input.nextLine();
-            return 0;
+            return INVALID_INPUT;
         }
 
         int option = input.nextInt();
@@ -90,7 +95,7 @@ public class LibraryDriver {
 
     private void runMenu() {
         int option = mainMenu();
-        while (option != 9) {
+        while (option != MENU_QUIT) {
             processOption(option);
             System.out.println();
             option = mainMenu();
@@ -115,8 +120,10 @@ public class LibraryDriver {
             case 6 ->
                 listAvailableBooks();
             case 7 ->
-                showAverageRating();
+                findBook();
             case 8 ->
+                showAverageRating();
+            case 9 ->
                 showHighestRatedBook();
             default ->
                 System.out.println("Invalid option");
@@ -174,7 +181,7 @@ public class LibraryDriver {
         System.out.println(lib.listAllBooks());
 
         int index = getValidIndex("Enter index of book to borrow: ");
-        if (index == -1) {
+        if (index == INVALID_INPUT) {
             return;
         }
 
@@ -198,7 +205,7 @@ public class LibraryDriver {
         System.out.println(lib.listAllBooks());
 
         int index = getValidIndex("Enter index of book to return: ");
-        if (index == -1) {
+        if (index == INVALID_INPUT) {
             return;
         }
 
@@ -218,12 +225,12 @@ public class LibraryDriver {
         System.out.println(lib.listAllBooks());
 
         int index = getValidIndex("Enter index of book to rate: ");
-        if (index == -1) {
+        if (index == INVALID_INPUT) {
             return;
         }
 
         double rating = getValidRating();
-        if (rating == -1) {
+        if (rating == INVALID_INPUT) {
             return;
         }
 
@@ -234,14 +241,14 @@ public class LibraryDriver {
     private int getValidIndex(String prompt) {
         if (lib.isEmpty()) {
             System.out.println("No books in library");
-            return -1;
+            return INVALID_INPUT;
         }
 
         System.out.print(prompt);
         if (!input.hasNextInt()) {
             System.out.println("Invalid input. Please enter a number.");
             input.nextLine();
-            return -1;
+            return INVALID_INPUT;
         }
 
         int index = input.nextInt();
@@ -250,27 +257,27 @@ public class LibraryDriver {
         Rules.ValidationResult result = Rules.inRange(0, lib.getBookCount() - 1).validate(index);
         if (!result.isSuccess()) {
             System.out.println(result.getMessage());
-            return -1;
+            return INVALID_INPUT;
         }
 
         return index;
     }
 
     private double getValidRating() {
-        System.out.print("Enter rating (0-5): ");
+        System.out.print("Enter rating (" + (int) MIN_RATING + "-" + (int) MAX_RATING + "): ");
         if (!input.hasNextDouble()) {
-            System.out.println("Invalid input. Please enter a number between 0 and 5.");
+            System.out.println("Invalid input. Please enter a number between " + (int) MIN_RATING + " and " + (int) MAX_RATING + ".");
             input.nextLine();
-            return -1;
+            return INVALID_INPUT;
         }
 
         double rating = input.nextDouble();
         input.nextLine();
 
-        Rules.ValidationResult result = Rules.inRangeDouble(0, 5).validate(rating);
+        Rules.ValidationResult result = Rules.inRangeDouble(MIN_RATING, MAX_RATING).validate(rating);
         if (!result.isSuccess()) {
             System.out.println(result.getMessage());
-            return -1;
+            return INVALID_INPUT;
         }
 
         return rating;
@@ -290,6 +297,31 @@ public class LibraryDriver {
             System.out.println("No rated books in library");
         } else {
             System.out.println("Average rating: " + avg);
+        }
+    }
+
+    private void findBook() {
+        System.out.print("Search by (title/author/isbn/genre/any): ");
+        String searchType = input.nextLine();
+
+        System.out.print("Enter search term: ");
+        String searchTerm = input.nextLine();
+
+        SearchResult<Book> result = lib.findBooks(searchTerm, searchType);
+
+        if (!result.isValid()) {
+            System.out.println("Error: " + result.getMessage());
+            return;
+        }
+
+        Book[] books = result.getItems();
+        if (books.length == 0) {
+            System.out.println("No books found matching the search.");
+        } else {
+            System.out.println("Search results:");
+            for (int i = 0; i < books.length; i++) {
+                System.out.println(i + ": " + books[i].toString());
+            }
         }
     }
 

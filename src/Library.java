@@ -1,5 +1,9 @@
-
 public class Library {
+    private static final int ISBN_LENGTH = 13;
+    private static final int DEFAULT_MAX_BOOKS = 1;
+    private static final int MAX_SEARCH_TERM_LENGTH = 100;
+    private static final String DEFAULT_LIBRARY_NAME = "Unnamed Library";
+    private static final String[] VALID_SEARCH_TYPES = {"title", "author", "isbn", "genre", "any"};
 
     private String libraryName;
     private Book[] books;
@@ -11,14 +15,14 @@ public class Library {
         if (nameResult.isSuccess()) {
             this.libraryName = libraryName;
         } else {
-            this.libraryName = "Unnamed Library";
+            this.libraryName = DEFAULT_LIBRARY_NAME;
         }
 
         Rules.ValidationResult maxBooksResult = Rules.positive().validate(maxBooks);
         if (maxBooksResult.isSuccess()) {
             this.books = new Book[maxBooks];
         } else {
-            this.books = new Book[1];
+            this.books = new Book[DEFAULT_MAX_BOOKS];
         }
 
         this.bookCount = 0;
@@ -30,7 +34,7 @@ public class Library {
         isbnCounter++;
 
         String counterStr = Long.toString(isbnCounter);
-        int remaining = 13 - counterStr.length();
+        int remaining = ISBN_LENGTH - counterStr.length();
 
         String nanoStr = Long.toString(System.nanoTime());
 
@@ -167,21 +171,88 @@ public class Library {
         return true;
     }
 
-    public Book findBook(String isbn) {
-        if (isbn == null) {
-            return null;
-        }
-        if (isEmpty()) {
-            return null;
-        }
-
-        for (int i = 0; i < bookCount; i++) {
-            if (books[i] != null && books[i].getIsbn().equals(isbn)) {
-                return books[i];
+    private boolean isValidSearchType(String searchType) {
+        for (String valid : VALID_SEARCH_TYPES) {
+            if (valid.equals(searchType.toLowerCase())) {
+                return true;
             }
         }
 
-        return null;
+        return false;
+    }
+
+    public SearchResult<Book> findBooks(String searchTerm, String searchType) {
+        Rules.ValidationResult termResult = Rules.all(
+            Rules.notEmpty(),
+            Rules.maxLength(MAX_SEARCH_TERM_LENGTH)
+        ).validate(searchTerm);
+        if (!termResult.isSuccess()) {
+            return SearchResult.failure("Search term: " + termResult.getMessage());
+        }
+
+        Rules.ValidationResult typeResult = Rules.notEmpty().validate(searchType);
+        if (!typeResult.isSuccess()) {
+            return SearchResult.failure("Search type: " + typeResult.getMessage());
+        }
+
+        if (!isValidSearchType(searchType)) {
+            return SearchResult.failure("Invalid search type. Use: title, author, isbn, genre, or any");
+        }
+
+        if (isEmpty()) {
+            return SearchResult.success(new Book[0]);
+        }
+
+        int matchCount = 0;
+        for (int i = 0; i < bookCount; i++) {
+            if (books[i] != null && matchesSearch(books[i], searchTerm, searchType)) {
+                matchCount++;
+            }
+        }
+
+        if (matchCount == 0) {
+            return SearchResult.success(new Book[0]);
+        }
+
+        Book[] results = new Book[matchCount];
+        int resultIndex = 0;
+        for (int i = 0; i < bookCount; i++) {
+            if (books[i] != null && matchesSearch(books[i], searchTerm, searchType)) {
+                results[resultIndex] = books[i];
+                resultIndex++;
+            }
+        }
+
+        return SearchResult.success(results);
+    }
+
+    private boolean isStringInSearch(String str, String searchTerm) {
+        return str.toLowerCase().contains(searchTerm.toLowerCase());
+    }
+
+    private boolean matchesSearch(Book book, String searchTerm, String searchType) {
+        return switch (searchType.toLowerCase()) {
+            case "title" -> 
+                isStringInSearch(book.getTitle(), searchTerm);
+            
+            case "author" -> 
+                isStringInSearch(book.getAuthor(), searchTerm);
+
+            case "isbn" -> 
+                book.getIsbn().equals(searchTerm);
+
+            case "genre" -> 
+                isStringInSearch(book.getGenre(), searchTerm);
+
+            case "any" -> 
+                isStringInSearch(book.getTitle(), searchTerm) ||
+                isStringInSearch(book.getAuthor(), searchTerm) ||
+                book.getIsbn().equals(searchTerm) ||
+                isStringInSearch(book.getGenre(), searchTerm);
+
+            default -> 
+                false;
+        };
     }
 
     public boolean rateBook(int index, double rating) {
