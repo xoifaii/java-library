@@ -134,16 +134,26 @@ public class Rules {
         };
     }
 
-    public static Validator<String> validInteger() {
+    public static Validator<String> positiveInteger() {
         return value -> {
             if (value == null || value.trim().isEmpty()) {
                 return ValidationResult.failure("Value cannot be empty");
             }
 
-            for (int i = 0; i < value.trim().length(); i++) {
-                if (!Character.isDigit(value.trim().charAt(i))) {
+            String str = value.trim();
+            if (str.length() > 9) {
+                return ValidationResult.failure("Value is too large");
+            }
+
+            for (int i = 0; i < str.length(); i++) {
+                if (!Character.isDigit(str.charAt(i))) {
                     return ValidationResult.failure("Value must be a valid integer");
                 }
+            }
+
+            int num = Integer.parseInt(str);
+            if (num <= 0) {
+                return ValidationResult.failure("Value must be positive");
             }
 
             return ValidationResult.success();

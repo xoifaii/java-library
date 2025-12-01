@@ -41,40 +41,20 @@ public class LibraryDriver {
         return name;
     }
 
-    private int getValidMaxBooks() {
+private int getValidMaxBooks() {
+    System.out.print("Enter the maximum number of books that the library can hold: ");
+    String line = input.nextLine();
+    Rules.ValidationResult result = Rules.positiveInteger().validate(line);
+    
+    while (!result.isSuccess()) {
+        System.out.println(result.getMessage());
         System.out.print("Enter the maximum number of books that the library can hold: ");
-        String line = input.nextLine();
-        Rules.ValidationResult result = Rules.validInteger().validate(line);
-
-        while (!result.isSuccess()) {
-            System.out.println(result.getMessage());
-            System.out.print("Enter the maximum number of books that the library can hold: ");
-            line = input.nextLine();
-            result = Rules.validInteger().validate(line);
-        }
-
-        int maxBooks = Integer.parseInt(line.trim());
-        Rules.ValidationResult positiveResult = Rules.positive().validate(maxBooks);
-
-        while (!positiveResult.isSuccess()) {
-            System.out.println(positiveResult.getMessage());
-            System.out.print("Enter the maximum number of books that the library can hold: ");
-            line = input.nextLine();
-            result = Rules.validInteger().validate(line);
-
-            while (!result.isSuccess()) {
-                System.out.println(result.getMessage());
-                System.out.print("Enter the maximum number of books that the library can hold: ");
-                line = input.nextLine();
-                result = Rules.validInteger().validate(line);
-            }
-
-            maxBooks = Integer.parseInt(line.trim());
-            positiveResult = Rules.positive().validate(maxBooks);
-        }
-
-        return maxBooks;
+        line = input.nextLine();
+        result = Rules.positiveInteger().validate(line);
     }
+    
+    return Integer.parseInt(line.trim());
+}
 
     private int mainMenu() {
         System.out.println("==== Library Menu ====");
