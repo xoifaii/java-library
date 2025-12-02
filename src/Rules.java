@@ -1,16 +1,9 @@
-
 public class Rules {
-    // <T> is a generic type parameter, it's a placeholder for any type
-    // When you use Validator<String>, T becomes String
-    // When you use Validator<Integer>, T becomes Integer.
-
     public interface Validator<T> {
-
         ValidationResult validate(T value);
     }
 
     public static class ValidationResult {
-
         private final boolean success;
         private final String message;
 
@@ -36,12 +29,8 @@ public class Rules {
         }
     }
 
-    // Returns Validator<String> the <String> tells the compiler T = String
-    // Java infers the lambda return type automatically from the method signature
-    // A lambda expression is a short block of code that takes in parameters and
-    // returns a value.
     public static Validator<String> notNull() {
-        return value -> { // This IS the validate method
+        return value -> {
             if (value == null) {
                 return ValidationResult.failure("Value cannot be null");
             }
@@ -56,7 +45,19 @@ public class Rules {
                 return ValidationResult.failure("Value cannot be null");
             }
 
-            if (value.trim().isEmpty()) {
+            if (value.isEmpty()) {
+                return ValidationResult.failure("Value cannot be empty");
+            }
+
+            boolean allWhitespace = true;
+            for (int i = 0; i < value.length(); i++) {
+                if (!Character.isWhitespace(value.charAt(i))) {
+                    allWhitespace = false;
+                    i = value.length();
+                } // should really use break
+            }
+
+            if (allWhitespace) {
                 return ValidationResult.failure("Value cannot be empty");
             }
 
@@ -92,8 +93,6 @@ public class Rules {
         };
     }
 
-    // Returns Validator<Integer> now T = Integer instead of String
-    // The lambda parameter 'value' is inferred to be type Integer
     public static Validator<Integer> positive() {
         return value -> {
             if (value == null) {
@@ -136,24 +135,19 @@ public class Rules {
 
     public static Validator<String> positiveInteger() {
         return value -> {
-            if (value == null || value.trim().isEmpty()) {
-                return ValidationResult.failure("Value cannot be empty");
+            if (value == null || value.length() > 9) {
+                return ValidationResult.failure("Value must be a valid positive integer");
             }
 
             String str = value.trim();
-            if (str.length() > 9) {
-                return ValidationResult.failure("Value is too large");
-            }
-
             for (int i = 0; i < str.length(); i++) {
                 if (!Character.isDigit(str.charAt(i))) {
-                    return ValidationResult.failure("Value must be a valid integer");
+                    return ValidationResult.failure("Value must be a valid positive integer");
                 }
             }
 
-            int num = Integer.parseInt(str);
-            if (num <= 0) {
-                return ValidationResult.failure("Value must be positive");
+            if (str.isEmpty() || Integer.parseInt(str) <= 0) {
+                return ValidationResult.failure("Value must be a valid positive integer");
             }
 
             return ValidationResult.success();
@@ -162,10 +156,6 @@ public class Rules {
 
     @SafeVarargs
     @SuppressWarnings("varargs")
-    // <T> before the return type means this method itself is generic
-    // T is inferred from the validators you pass in
-    // If you pass Validator<String> validators, T becomes String automatically.
-    // Pretty handy.
     public static <T> Validator<T> all(Validator<T>... validators) {
         return value -> {
             for (Validator<T> validator : validators) {
@@ -213,7 +203,6 @@ public class Rules {
 
     @FunctionalInterface
     public interface ValidationFunction<T> {
-
         boolean test(T value);
     }
 }

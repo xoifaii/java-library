@@ -1,5 +1,3 @@
-// TODO: Add levenshtein distance for fuzzy searching?
-
 public class SearchResult<T> {
     private final T[] items;
     private final Rules.ValidationResult validation;

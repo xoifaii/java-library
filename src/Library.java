@@ -2,8 +2,10 @@ public class Library {
     private static final int ISBN_LENGTH = 13;
     private static final int DEFAULT_MAX_BOOKS = 1;
     private static final int MAX_SEARCH_TERM_LENGTH = 100;
+    private static final int MAX_SEARCH_TYPE_LENGTH = 10;
+    private static final int MAX_LIBRARY_NAME_LENGTH = 100;
     private static final String DEFAULT_LIBRARY_NAME = "Unnamed Library";
-    private static final String[] VALID_SEARCH_TYPES = {"title", "author", "isbn", "genre", "any"};
+    private static final String[] VALID_SEARCH_TYPES = { "title", "author", "isbn", "genre", "any" };
 
     private String libraryName;
     private Book[] books;
@@ -26,6 +28,18 @@ public class Library {
         }
 
         this.bookCount = 0;
+    }
+
+    public static Rules.ValidationResult validateLibraryName(String name) {
+        return Rules.all(Rules.notEmpty(), Rules.maxLength(MAX_LIBRARY_NAME_LENGTH)).validate(name);
+    }
+
+    public static Rules.ValidationResult validateMaxBooks(String input) {
+        return Rules.positiveInteger().validate(input);
+    }
+
+    public Rules.ValidationResult validateIndex(int index) {
+        return Rules.inRange(0, bookCount - 1).validate(index);
     }
 
     // synchronized is needed here to prevent multiple libraries from generating the
@@ -74,7 +88,7 @@ public class Library {
         for (int i = 0; i < bookCount; i++) {
             if (books[i] != null) {
                 list += i + ": " + books[i].toString() + "\n";
-            }
+            } // this is o(n^2) without string builder :(
         }
 
         if (list.isEmpty()) {
@@ -95,7 +109,7 @@ public class Library {
             if (books[i] != null && !books[i].isOnLoan()) {
                 list += i + ": " + books[i].toString() + "\n";
                 hasAvailable = true;
-            }
+            } // Same
         }
 
         if (!hasAvailable) {
@@ -109,7 +123,7 @@ public class Library {
         int count = 0;
         for (int i = 0; i < bookCount; i++) {
             if (books[i] != null && books[i].isOnLoan()) {
-                count += 1;
+                count++;
             }
         }
 
@@ -126,7 +140,7 @@ public class Library {
         for (int i = 0; i < bookCount; i++) {
             if (books[i] != null && books[i].isRated()) {
                 total += books[i].getRating();
-                ratedCount += 1;
+                ratedCount++;
             }
         }
 
@@ -167,7 +181,7 @@ public class Library {
         }
 
         books[bookCount] = book;
-        bookCount += 1;
+        bookCount++;
         return true;
     }
 
@@ -183,14 +197,15 @@ public class Library {
 
     public SearchResult<Book> findBooks(String searchTerm, String searchType) {
         Rules.ValidationResult termResult = Rules.all(
-            Rules.notEmpty(),
-            Rules.maxLength(MAX_SEARCH_TERM_LENGTH)
-        ).validate(searchTerm);
+                Rules.notEmpty(),
+                Rules.maxLength(MAX_SEARCH_TERM_LENGTH)).validate(searchTerm);
         if (!termResult.isSuccess()) {
             return SearchResult.failure("Search term: " + termResult.getMessage());
         }
 
-        Rules.ValidationResult typeResult = Rules.notEmpty().validate(searchType);
+        Rules.ValidationResult typeResult = Rules.all(
+                Rules.notEmpty(),
+                Rules.maxLength(MAX_SEARCH_TYPE_LENGTH)).validate(searchType);
         if (!typeResult.isSuccess()) {
             return SearchResult.failure("Search type: " + typeResult.getMessage());
         }
@@ -232,25 +247,25 @@ public class Library {
 
     private boolean matchesSearch(Book book, String searchTerm, String searchType) {
         return switch (searchType.toLowerCase()) {
-            case "title" -> 
+            case "title" ->
                 isStringInSearch(book.getTitle(), searchTerm);
-            
-            case "author" -> 
+
+            case "author" ->
                 isStringInSearch(book.getAuthor(), searchTerm);
 
-            case "isbn" -> 
+            case "isbn" ->
                 book.getIsbn().equals(searchTerm);
 
-            case "genre" -> 
+            case "genre" ->
                 isStringInSearch(book.getGenre(), searchTerm);
 
-            case "any" -> 
+            case "any" ->
                 isStringInSearch(book.getTitle(), searchTerm) ||
-                isStringInSearch(book.getAuthor(), searchTerm) ||
-                book.getIsbn().equals(searchTerm) ||
-                isStringInSearch(book.getGenre(), searchTerm);
+                        isStringInSearch(book.getAuthor(), searchTerm) ||
+                        book.getIsbn().equals(searchTerm) ||
+                        isStringInSearch(book.getGenre(), searchTerm);
 
-            default -> 
+            default ->
                 false;
         };
     }
@@ -260,8 +275,7 @@ public class Library {
             return false;
         }
 
-        books[index].setRating(rating);
-        return true;
+        return books[index].setRating(rating);
     }
 
     public boolean borrowBook(int index) {

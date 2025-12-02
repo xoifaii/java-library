@@ -1,12 +1,8 @@
-
 import java.util.Scanner;
 
 public class LibraryDriver {
-
     private static final int INVALID_INPUT = -1;
     private static final int MENU_QUIT = 10;
-    private static final double MIN_RATING = 0;
-    private static final double MAX_RATING = 5;
 
     private final Scanner input;
     private final Library lib;
@@ -28,33 +24,33 @@ public class LibraryDriver {
     private String getValidLibraryName() {
         System.out.print("Enter in the name of the Library: ");
         String name = input.nextLine();
-        Rules.ValidationResult result = Rules.notEmpty().validate(name);
+        Rules.ValidationResult result = Library.validateLibraryName(name);
 
         while (!result.isSuccess()) {
             System.out.println(result.getMessage());
             System.out.print("Enter in the name of the Library: ");
 
             name = input.nextLine();
-            result = Rules.notEmpty().validate(name);
+            result = Library.validateLibraryName(name);
         }
 
         return name;
     }
 
-private int getValidMaxBooks() {
-    System.out.print("Enter the maximum number of books that the library can hold: ");
-    String line = input.nextLine();
-    Rules.ValidationResult result = Rules.positiveInteger().validate(line);
-    
-    while (!result.isSuccess()) {
-        System.out.println(result.getMessage());
+    private int getValidMaxBooks() {
         System.out.print("Enter the maximum number of books that the library can hold: ");
-        line = input.nextLine();
-        result = Rules.positiveInteger().validate(line);
+        String line = input.nextLine();
+        Rules.ValidationResult result = Library.validateMaxBooks(line);
+
+        while (!result.isSuccess()) {
+            System.out.println(result.getMessage());
+            System.out.print("Enter the maximum number of books that the library can hold: ");
+            line = input.nextLine();
+            result = Library.validateMaxBooks(line);
+        }
+
+        return Integer.parseInt(line.trim());
     }
-    
-    return Integer.parseInt(line.trim());
-}
 
     private int mainMenu() {
         System.out.println("==== Library Menu ====");
@@ -126,7 +122,7 @@ private int getValidMaxBooks() {
         System.out.print("Enter book title: ");
         String title = input.nextLine();
 
-        Rules.ValidationResult titleResult = Rules.notEmpty().validate(title);
+        Rules.ValidationResult titleResult = Book.validateTitle(title);
         if (!titleResult.isSuccess()) {
             System.out.println(titleResult.getMessage());
             return;
@@ -135,7 +131,7 @@ private int getValidMaxBooks() {
         System.out.print("Enter book author: ");
         String author = input.nextLine();
 
-        Rules.ValidationResult authorResult = Rules.notEmpty().validate(author);
+        Rules.ValidationResult authorResult = Book.validateAuthor(author);
         if (!authorResult.isSuccess()) {
             System.out.println(authorResult.getMessage());
             return;
@@ -144,7 +140,7 @@ private int getValidMaxBooks() {
         System.out.print("Enter book genre: ");
         String genre = input.nextLine();
 
-        Rules.ValidationResult genreResult = Rules.notEmpty().validate(genre);
+        Rules.ValidationResult genreResult = Book.validateGenre(genre);
         if (!genreResult.isSuccess()) {
             System.out.println(genreResult.getMessage());
             return;
@@ -221,8 +217,11 @@ private int getValidMaxBooks() {
             return;
         }
 
-        lib.rateBook(index, rating);
-        System.out.println("Book rated successfully!");
+        if (lib.rateBook(index, rating)) {
+            System.out.println("Book rated successfully!");
+        } else {
+            System.out.println("Failed to rate book");
+        }
     }
 
     private int getValidIndex(String prompt) {
@@ -241,7 +240,7 @@ private int getValidMaxBooks() {
         int index = input.nextInt();
         input.nextLine();
 
-        Rules.ValidationResult result = Rules.inRange(0, lib.getBookCount() - 1).validate(index);
+        Rules.ValidationResult result = lib.validateIndex(index);
         if (!result.isSuccess()) {
             System.out.println(result.getMessage());
             return INVALID_INPUT;
@@ -251,9 +250,10 @@ private int getValidMaxBooks() {
     }
 
     private double getValidRating() {
-        System.out.print("Enter rating (" + (int) MIN_RATING + "-" + (int) MAX_RATING + "): ");
+        System.out.print("Enter rating (" + (int) Book.getMinRating() + "-" + (int) Book.getMaxRating() + "): ");
         if (!input.hasNextDouble()) {
-            System.out.println("Invalid input. Please enter a number between " + (int) MIN_RATING + " and " + (int) MAX_RATING + ".");
+            System.out.println("Invalid input. Please enter a number between " + (int) Book.getMinRating() + " and "
+                    + (int) Book.getMaxRating() + ".");
             input.nextLine();
             return INVALID_INPUT;
         }
@@ -261,7 +261,7 @@ private int getValidMaxBooks() {
         double rating = input.nextDouble();
         input.nextLine();
 
-        Rules.ValidationResult result = Rules.inRangeDouble(MIN_RATING, MAX_RATING).validate(rating);
+        Rules.ValidationResult result = Book.validateRating(rating);
         if (!result.isSuccess()) {
             System.out.println(result.getMessage());
             return INVALID_INPUT;

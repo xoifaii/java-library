@@ -70,52 +70,99 @@ public class Book {
 
         this.onLoan = false;
         this.rating = 0;
+        this.isRated = false;
     }
 
-    // Some setters/getters are simply here for future proofing
-    // Updating title/author/genre/isbn is not currently a requirement
+    public static int getMaxTitleLength() {
+        return MAX_TITLE_LENGTH;
+    }
+
+    public static int getMaxAuthorLength() {
+        return MAX_AUTHOR_LENGTH;
+    }
+
+    public static int getMaxGenreLength() {
+        return MAX_GENRE_LENGTH;
+    }
+
+    public static double getMinRating() {
+        return MIN_RATING;
+    }
+
+    public static double getMaxRating() {
+        return MAX_RATING;
+    }
+
+    public static Rules.ValidationResult validateTitle(String title) {
+        return Rules.all(Rules.notEmpty(), Rules.maxLength(MAX_TITLE_LENGTH)).validate(title);
+    }
+
+    public static Rules.ValidationResult validateAuthor(String author) {
+        return Rules.all(Rules.notEmpty(), Rules.maxLength(MAX_AUTHOR_LENGTH)).validate(author);
+    }
+
+    public static Rules.ValidationResult validateGenre(String genre) {
+        return Rules.all(Rules.notEmpty(), Rules.maxLength(MAX_GENRE_LENGTH)).validate(genre);
+    }
+
+    public static Rules.ValidationResult validateRating(double rating) {
+        return Rules.inRangeDouble(MIN_RATING, MAX_RATING).validate(rating);
+    }
+
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public boolean setTitle(String title) {
         Rules.ValidationResult result = Rules.all(Rules.notNull(), Rules.maxLength(MAX_TITLE_LENGTH)).validate(title);
         if (result.isSuccess()) {
             this.title = title;
+            return true;
         }
+
+        return false;
     }
 
     public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public boolean setAuthor(String author) {
         Rules.ValidationResult result = Rules.all(Rules.notNull(), Rules.maxLength(MAX_AUTHOR_LENGTH)).validate(author);
         if (result.isSuccess()) {
             this.author = author;
+            return true;
         }
+
+        return false;
     }
 
     public String getGenre() {
         return this.genre;
     }
 
-    public void setGenre(String genre) {
+    public boolean setGenre(String genre) {
         Rules.ValidationResult result = Rules.all(Rules.notNull(), Rules.maxLength(MAX_GENRE_LENGTH)).validate(genre);
         if (result.isSuccess()) {
             this.genre = genre;
+            return true;
         }
+
+        return false;
     }
 
     public String getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(String isbn) {
+    public boolean setIsbn(String isbn) {
         Rules.ValidationResult result = Rules.exactLength(ISBN_LENGTH).validate(isbn);
         if (result.isSuccess()) {
             this.isbn = isbn;
+            return true;
         }
+
+        return false;
     }
 
     public boolean isOnLoan() {
@@ -138,12 +185,15 @@ public class Book {
         return isRated;
     }
 
-    public void setRating(double rating) {
+    public boolean setRating(double rating) {
         Rules.ValidationResult result = Rules.inRangeDouble(MIN_RATING, MAX_RATING).validate(rating);
         if (result.isSuccess()) {
             this.rating = rating;
             this.isRated = true;
+            return true;
         }
+
+        return false;
     }
 
     @Override
