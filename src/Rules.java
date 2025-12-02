@@ -1,8 +1,11 @@
 public class Rules {
+    // Generic interface, T is a type parameter (placeholder for any type)
+    // Functional interface (one abstract method) so lambdas can implement it
     public interface Validator<T> {
         ValidationResult validate(T value);
     }
 
+    // Simple result container, not generic, just holds success/failure + message
     public static class ValidationResult {
         private final boolean success;
         private final String message;
@@ -29,6 +32,8 @@ public class Rules {
         }
     }
 
+    // Returns Validator<String>, T is now String
+    // Lambda implements the validate(String value) method
     public static Validator<String> notNull() {
         return value -> {
             if (value == null) {
@@ -54,7 +59,7 @@ public class Rules {
                 if (!Character.isWhitespace(value.charAt(i))) {
                     allWhitespace = false;
                     i = value.length();
-                } // should really use break
+                }
             }
 
             if (allWhitespace) {
@@ -93,6 +98,7 @@ public class Rules {
         };
     }
 
+    // Returns Validator<Integer>, T is Integer here
     public static Validator<Integer> positive() {
         return value -> {
             if (value == null) {
@@ -154,6 +160,10 @@ public class Rules {
         };
     }
 
+    // Generic method, <T> declares its own type parameter
+    // Takes multiple Validator<T> and returns a combined Validator<T>
+    // Java infers T from the validators passed in
+    // Example: all(notNull(), maxLength(10)) -> T inferred as String
     @SafeVarargs
     @SuppressWarnings("varargs")
     public static <T> Validator<T> all(Validator<T>... validators) {
@@ -169,6 +179,7 @@ public class Rules {
         };
     }
 
+    // Wraps a validator to allow null values to pass
     public static <T> Validator<T> optional(Validator<T> validator) {
         return value -> {
             if (value == null) {
@@ -179,6 +190,7 @@ public class Rules {
         };
     }
 
+    // Creates validator from a custom function
     public static <T> Validator<T> custom(ValidationFunction<T> function) {
         return value -> {
             boolean isValid = function.test(value);
@@ -201,6 +213,7 @@ public class Rules {
         };
     }
 
+    // Another functional interface for custom validation logic
     @FunctionalInterface
     public interface ValidationFunction<T> {
         boolean test(T value);
